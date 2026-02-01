@@ -49,6 +49,8 @@ export function RoutinesFormPage() {
 	const [routine, setRoutine] = useState<Routine>(defaultRoutine);
 	const [categories, setCategories] = useState<string[]>([]);
 	const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+	const [willBeDeletedId, setWillBeDeletedId] = useState<number | null>(null);
 	const editMatch = useMatch({
 		from: "/daily-routines/$routineId/edit",
 		shouldThrow: false,
@@ -73,6 +75,22 @@ export function RoutinesFormPage() {
 		}
 		// Create new routine
 		await axios.post("http://localhost:5000/routine", routine);
+	};
+
+	const deleteRoutinePart = async () => {
+		try {
+			if (!willBeDeletedId) return;
+			await axios.delete(
+				`http://localhost:5000/routine/parts?id=${willBeDeletedId}`,
+			);
+
+			setRoutine((prev) => ({
+				...prev,
+				parts: prev.parts.filter((part) => part.id !== willBeDeletedId),
+			}));
+		} catch (e) {
+			console.error(e);
+		}
 	};
 
 	useEffect(() => {
@@ -195,6 +213,21 @@ export function RoutinesFormPage() {
 									setSaveDialogOpen(false);
 								}}
 							/>
+
+							<AppDialog
+								open={deleteDialogOpen}
+								title="Rutini parçasını sil?"
+								message=" Emin misiniz?"
+								showCancel
+								confirmText="Sil"
+								cancelText="İptal"
+								onClose={() => setDeleteDialogOpen(false)}
+								onConfirm={async () => {
+									await deleteRoutinePart();
+									setDeleteDialogOpen(false);
+								}}
+							/>
+
 							<div className="space-y-2">
 								<div className="text-sm font-medium">Başlık</div>
 								<Input
@@ -257,10 +290,11 @@ export function RoutinesFormPage() {
 								) : (
 									<div className="rounded-md border">
 										<div className="grid grid-cols-12 gap-2 px-3 py-2 text-xs text-muted-foreground">
-											<div className="col-span-6">Rutin</div>
+											<div className="col-span-4">Rutin</div>
 											<div className="col-span-2">Başlangıç</div>
 											<div className="col-span-2">Bitiş</div>
 											<div className="col-span-2">Süre</div>
+											<div className="col-span-2">İşlemler</div>
 										</div>
 										<Separator />
 										<div className="divide-y">
@@ -270,7 +304,7 @@ export function RoutinesFormPage() {
 													key={`part_row_${part.id || index}`}
 												>
 													<Input
-														className="col-span-6"
+														className="col-span-4"
 														type="text"
 														value={part.description}
 														placeholder="Routine name"
@@ -291,6 +325,18 @@ export function RoutinesFormPage() {
 
 													<div className="col-span-2 text-sm tabular-nums">
 														{calculateDuration(part.start_hour, part.end_hour)}
+													</div>
+													<div className="col-span-2 text-sm tabular-nums">
+														<Button
+															variant="destructive"
+															disabled={!part.id}
+															onClick={() => {
+																setWillBeDeletedId(part.id || null);
+																setDeleteDialogOpen(true);
+															}}
+														>
+															Sil
+														</Button>
 													</div>
 												</div>
 											))}

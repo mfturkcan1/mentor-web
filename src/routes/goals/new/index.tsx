@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import "dayjs/locale/tr";
 import {
+	GoalLifeCycle,
 	GoalPeriodType,
 	GoalPriority,
 	type GoalRequestDto,
@@ -62,14 +63,15 @@ export function GoalsFormPage() {
 		description: null,
 		period_type: GoalPeriodType.MONTH,
 		deadline_at: null,
-		period_start: now.toDate(),
-		period_end: now.add(1, "month").toDate(),
+		period_start: null,
+		period_end: null,
 		status: GoalStatus.PLANNED,
 		priority: GoalPriority.MEDIUM,
 		target_value: null,
 		current_value: 0,
 		unit: null,
 		parent_goal_id: null,
+		goal_cycle: GoalLifeCycle.MEDIUM_TERM,
 	};
 
 	const [goal, setGoal] = useState<GoalRequestDto>(defaultGoal);
@@ -85,7 +87,7 @@ export function GoalsFormPage() {
 	const periodTypeOptions = useMemo(() => enumOptions(GoalPeriodType), []);
 	const statusOptions = useMemo(() => enumOptions(GoalStatus), []);
 	const priorityOptions = useMemo(() => enumOptions(GoalPriority), []);
-
+	const lifeCycleOptions = useMemo(() => enumOptions(GoalLifeCycle), []);
 	const requiresDates = goal.period_type !== GoalPeriodType.DEADLINE;
 	const requiresDeadline = goal.period_type === GoalPeriodType.DEADLINE;
 
@@ -192,7 +194,7 @@ export function GoalsFormPage() {
 
 							{/* Period / Status / Priority */}
 							<div className="grid grid-cols-12 gap-3 items-end">
-								<div className="col-span-12 md:col-span-4 space-y-2">
+								<div className="col-span-12 md:col-span-3 space-y-2">
 									<div className="text-sm font-medium">Periyot Tipi</div>
 									<Autocomplete
 										disableClearable
@@ -226,7 +228,7 @@ export function GoalsFormPage() {
 									/>
 								</div>
 
-								<div className="col-span-12 md:col-span-4 space-y-2">
+								<div className="col-span-12 md:col-span-3 space-y-2">
 									<div className="text-sm font-medium">Durum</div>
 									<Autocomplete
 										disableClearable
@@ -244,7 +246,7 @@ export function GoalsFormPage() {
 									/>
 								</div>
 
-								<div className="col-span-12 md:col-span-4 space-y-2">
+								<div className="col-span-12 md:col-span-3 space-y-2">
 									<div className="text-sm font-medium">Öncelik</div>
 									<Autocomplete
 										disableClearable
@@ -257,6 +259,24 @@ export function GoalsFormPage() {
 											setGoal((prev) => ({
 												...prev,
 												priority: newValue as GoalPriority,
+											}));
+										}}
+									/>
+								</div>
+
+								<div className="col-span-12 md:col-span-3 space-y-2">
+									<div className="text-sm font-medium">Yaşam Döngüsü</div>
+									<Autocomplete
+										disableClearable
+										value={goal.goal_cycle}
+										options={lifeCycleOptions}
+										renderInput={(params) => (
+											<TextField {...params} label="Yaşam Döngüsü" />
+										)}
+										onChange={(_, newValue) => {
+											setGoal((prev) => ({
+												...prev,
+												goal_life_cycle: newValue as GoalLifeCycle,
 											}));
 										}}
 									/>

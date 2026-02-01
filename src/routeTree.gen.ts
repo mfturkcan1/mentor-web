@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SummaryIndexRouteImport } from './routes/summary/index'
 import { Route as GoalsIndexRouteImport } from './routes/goals/index'
 import { Route as DailyRoutinesIndexRouteImport } from './routes/daily-routines/index'
 import { Route as GoalsNewIndexRouteImport } from './routes/goals/new/index'
@@ -18,6 +19,11 @@ import { Route as DailyRoutinesRoutineIdEditRouteImport } from './routes/daily-r
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SummaryIndexRoute = SummaryIndexRouteImport.update({
+  id: '/summary/',
+  path: '/summary/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GoalsIndexRoute = GoalsIndexRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/daily-routines': typeof DailyRoutinesIndexRoute
   '/goals': typeof GoalsIndexRoute
+  '/summary': typeof SummaryIndexRoute
   '/daily-routines/$routineId/edit': typeof DailyRoutinesRoutineIdEditRoute
   '/goals/new': typeof GoalsNewIndexRoute
 }
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/daily-routines': typeof DailyRoutinesIndexRoute
   '/goals': typeof GoalsIndexRoute
+  '/summary': typeof SummaryIndexRoute
   '/daily-routines/$routineId/edit': typeof DailyRoutinesRoutineIdEditRoute
   '/goals/new': typeof GoalsNewIndexRoute
 }
@@ -61,6 +69,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/daily-routines/': typeof DailyRoutinesIndexRoute
   '/goals/': typeof GoalsIndexRoute
+  '/summary/': typeof SummaryIndexRoute
   '/daily-routines/$routineId/edit': typeof DailyRoutinesRoutineIdEditRoute
   '/goals/new/': typeof GoalsNewIndexRoute
 }
@@ -70,6 +79,7 @@ export interface FileRouteTypes {
     | '/'
     | '/daily-routines'
     | '/goals'
+    | '/summary'
     | '/daily-routines/$routineId/edit'
     | '/goals/new'
   fileRoutesByTo: FileRoutesByTo
@@ -77,6 +87,7 @@ export interface FileRouteTypes {
     | '/'
     | '/daily-routines'
     | '/goals'
+    | '/summary'
     | '/daily-routines/$routineId/edit'
     | '/goals/new'
   id:
@@ -84,6 +95,7 @@ export interface FileRouteTypes {
     | '/'
     | '/daily-routines/'
     | '/goals/'
+    | '/summary/'
     | '/daily-routines/$routineId/edit'
     | '/goals/new/'
   fileRoutesById: FileRoutesById
@@ -92,6 +104,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DailyRoutinesIndexRoute: typeof DailyRoutinesIndexRoute
   GoalsIndexRoute: typeof GoalsIndexRoute
+  SummaryIndexRoute: typeof SummaryIndexRoute
   DailyRoutinesRoutineIdEditRoute: typeof DailyRoutinesRoutineIdEditRoute
   GoalsNewIndexRoute: typeof GoalsNewIndexRoute
 }
@@ -103,6 +116,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/summary/': {
+      id: '/summary/'
+      path: '/summary'
+      fullPath: '/summary'
+      preLoaderRoute: typeof SummaryIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/goals/': {
@@ -140,6 +160,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DailyRoutinesIndexRoute: DailyRoutinesIndexRoute,
   GoalsIndexRoute: GoalsIndexRoute,
+  SummaryIndexRoute: SummaryIndexRoute,
   DailyRoutinesRoutineIdEditRoute: DailyRoutinesRoutineIdEditRoute,
   GoalsNewIndexRoute: GoalsNewIndexRoute,
 }

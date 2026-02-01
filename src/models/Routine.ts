@@ -35,3 +35,10 @@ export type RoutinePartResponse = {
 	description: string;
 	save_as_category: boolean;
 };
+
+export type RoutineSummaryPart = {
+	month: Dayjs;
+	description: string;
+	total_minutes: number;
+	item_count: number;
+};
