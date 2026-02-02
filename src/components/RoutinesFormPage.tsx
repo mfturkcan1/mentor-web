@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import { useMatch } from "@tanstack/react-router";
 import axios from "axios";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -130,11 +130,11 @@ export function RoutinesFormPage() {
 				});
 
 				if (convertedParts.length > 0) {
-					const lastPart = convertedParts[convertedParts.length - 1];
+					const start_hour = calculateEndHour(convertedParts);
 					setNewRoutine({
 						...newRoutine,
-						start_hour: lastPart.end_hour,
-						end_hour: lastPart.end_hour,
+						start_hour: start_hour,
+						end_hour: now,
 					});
 				}
 			} catch (e) {
@@ -142,6 +142,17 @@ export function RoutinesFormPage() {
 			}
 		})();
 	}, [viewMode, routineId]);
+
+	const calculateEndHour = (parts: RoutinePart[]): Dayjs => {
+		return (
+			parts.reduce<Dayjs | null>((max, part) => {
+				const end = part.end_hour;
+				if (!end) return max;
+				if (!max) return end;
+				return end.isAfter(max) ? end : max;
+			}, null) ?? now
+		);
+	};
 
 	const calculateTotalDuration = (parts: RoutinePart[]) => {
 		let totalMinutes = 0;
@@ -439,8 +450,11 @@ export function RoutinesFormPage() {
 													setAppendRoutines([...appendRoutines, f]);
 												}
 												setNewRoutine({
-													start_hour: f.end_hour,
-													end_hour: f.end_hour,
+													start_hour:
+														appendRoutines.length === 0
+															? calculateEndHour(routine.parts)
+															: calculateEndHour(appendRoutines),
+													end_hour: now,
 													description: "",
 													save_as_category: false,
 												});

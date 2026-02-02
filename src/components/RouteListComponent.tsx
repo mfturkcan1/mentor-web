@@ -114,7 +114,7 @@ export default function RoutineListComponent() {
 							<Button
 								type="button"
 								onClick={() => {
-									navigate({ to: "/daily-routines" });
+									navigate({ to: "/daily-routines/create" });
 								}}
 							>
 								Yeni ekle
