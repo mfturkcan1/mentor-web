@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { GoalsListComponent } from "@/components/GoalsListComponent";
 import MonthlySummaryComponent from "@/components/MonthlySummaryComponent";
 import RoutineListComponent from "@/components/RouteListComponent";
+import { TodosListComponent } from "@/components/TodoListComponent";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
@@ -59,6 +60,8 @@ export const Route = createFileRoute("/")({
 export default function App() {
 	return (
 		<div className="min-h-[calc(100vh-2rem)] w-full flex flex-col items-center justify-center p-6">
+			<TodosListComponent />
+			<Separator className="my-10" />
 			<MonthlySummaryComponent />
 			<Separator className="my-10" />
 			<RoutineListComponent />
